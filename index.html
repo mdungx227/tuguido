@@ -54,101 +54,40 @@
       font-size: 1em;
     }
 
-    button:hover {
-      opacity: 0.9;
+    button:hover { opacity: 0.9; }
+
+    .link {
+      margin-top: 15px;
+      cursor: pointer;
+      color: #333;
+      text-decoration: underline;
+      font-size: 0.9em;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    .lockers {
-      display: flex;
-      gap: 40px;
-      justify-content: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-
-    .locker {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      padding: 20px;
-      width: 200px;
-      text-align: center;
-      transition: 0.3s;
-    }
-
-    .locker:hover {
-      transform: scale(1.05);
-    }
-
-    .status {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin: 10px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    .free {
-      background-color: #4CAF50;
-    }
-
-    .busy {
-      background-color: #F44336;
-    }
-
-    table {
-      background: white;
-      border-radius: 12px;
-      border-collapse: collapse;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 700px;
-      overflow: hidden;
-      margin: 0 auto;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #2196F3;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .logout-btn {
-      background-color: #f44336;
-      margin-top: 20px;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
+
   <!-- Đăng nhập -->
   <div id="loginPage" class="container">
-    <h1>Đăng nhập hệ thống!!!!</h1>
+    <h1>Đăng nhập hệ thống</h1>
     <input type="text" id="phone" placeholder="Số điện thoại">
     <input type="password" id="password" placeholder="Mật khẩu">
     <button onclick="login()">Đăng nhập</button>
+
+    <div class="link" onclick="showRegister()">Chưa có tài khoản? Đăng ký</div>
+  </div>
+
+  <!-- Đăng ký -->
+  <div id="registerPage" class="container hidden">
+    <h1>Đăng ký tài khoản</h1>
+    <input type="text" id="regName" placeholder="Họ và tên">
+    <input type="text" id="regPhone" placeholder="Số điện thoại">
+    <input type="password" id="regPass" placeholder="Mật khẩu">
+    <button onclick="register()">Tạo tài khoản</button>
+
+    <div class="link" onclick="showLogin()">Đã có tài khoản? Đăng nhập</div>
   </div>
 
   <!-- Giao diện tủ gửi đồ -->
@@ -185,21 +124,55 @@
       <tbody id="historyBody"></tbody>
     </table>
 
-    <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+    <button class="logout-btn" style="background:#f44336;margin-top:20px;" onclick="logout()">Đăng xuất</button>
   </div>
 
   <script>
-    // Dữ liệu giả cho người dùng hợp lệ
+    // Danh sách người dùng
     const users = [
       { phone: "0987654321", password: "1234", name: "Nguyễn Văn A" },
       { phone: "0911222333", password: "abcd", name: "Trần Thị B" },
-      {phone: "1", password:"1"}
+      { phone: "1", password: "1", name: "Test" }
     ];
 
     let currentUser = null;
     const lockerStatus = {1: "free", 2: "free"};
     const historyTable = document.getElementById("historyBody");
 
+    /* ==== CHUYỂN TRANG ==== */
+    function showRegister() {
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("registerPage").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      document.getElementById("registerPage").classList.add("hidden");
+      document.getElementById("loginPage").classList.remove("hidden");
+    }
+
+    /* ==== ĐĂNG KÝ ==== */
+    function register() {
+      const name = document.getElementById("regName").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+      const pass = document.getElementById("regPass").value.trim();
+
+      if (!name || !phone || !pass) {
+        alert("⚠ Vui lòng nhập đầy đủ thông tin!");
+        return;
+      }
+
+      if (users.some(u => u.phone === phone)) {
+        alert("❌ Số điện thoại đã tồn tại!");
+        return;
+      }
+
+      users.push({ phone, password: pass, name });
+
+      alert("✅ Đăng ký thành công! Hãy đăng nhập.");
+      showLogin();
+    }
+
+    /* ==== ĐĂNG NHẬP ==== */
     function login() {
       const phone = document.getElementById("phone").value.trim();
       const pass = document.getElementById("password").value.trim();
@@ -212,54 +185,51 @@
 
       currentUser = user;
       document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("registerPage").classList.add("hidden");
       document.getElementById("mainPage").classList.remove("hidden");
+
       document.getElementById("welcomeUser").textContent = `Xin chào, ${user.name} (${user.phone})`;
     }
 
+    /* ==== ĐĂNG XUẤT ==== */
     function logout() {
       currentUser = null;
-      document.getElementById("loginPage").classList.remove("hidden");
       document.getElementById("mainPage").classList.add("hidden");
+      document.getElementById("loginPage").classList.remove("hidden");
     }
 
+    /* ==== TỦ GỬI ĐỒ ==== */
     function updateStatus(id, state) {
-      const statusDiv = document.getElementById("status" + id);
-      if (state === "free") {
-        statusDiv.className = "status free";
-        statusDiv.textContent = "Trống";
-      } else {
-        statusDiv.className = "status busy";
-        statusDiv.textContent = "Đang dùng";
-      }
+      const s = document.getElementById("status" + id);
+      s.className = "status " + state;
+      s.textContent = state === "free" ? "Trống" : "Đang dùng";
     }
 
     function addHistory(lockerId, action) {
-      const now = new Date();
-      const timeString = now.toLocaleString("vi-VN", { hour12: false });
+      const time = new Date().toLocaleString("vi-VN", { hour12: false });
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${timeString}</td>
+        <td>${time}</td>
         <td>Tủ ${lockerId}</td>
         <td>${action}</td>
-        <td>${currentUser.name}</td>
-      `;
+        <td>${currentUser.name}</td>`;
       historyTable.prepend(row);
     }
 
     function sendItem(id) {
       if (lockerStatus[id] === "busy") {
-        alert(`❌ Tủ ${id} đang có đồ, không thể gửi thêm!`);
+        alert(`❌ Tủ ${id} đã có đồ!`);
         return;
       }
       lockerStatus[id] = "busy";
       updateStatus(id, "busy");
       addHistory(id, "Gửi đồ");
-      alert(`✅ Tủ ${id} đã được mở để bạn gửi đồ.`);
+      alert(`✅ Tủ ${id} đã mở sẵn để gửi đồ.`);
     }
 
     function getItem(id) {
       if (lockerStatus[id] === "free") {
-        alert(`❌ Tủ ${id} đang trống, không có đồ để nhận.`);
+        alert(`❌ Tủ ${id} đang trống!`);
         return;
       }
       lockerStatus[id] = "free";
@@ -268,7 +238,6 @@
       alert(`📦 Bạn đã nhận đồ từ tủ ${id}.`);
     }
   </script>
+
 </body>
 </html>
-
-
