@@ -686,21 +686,21 @@ app.get("/", (req, res) => {
 
 // Dashboard cư dân
 app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "/dashboard"));
+  res.sendFile(path.join(__dirname, "../dashboard.html"));
 });
 
 // Trang shipper
 app.get("/shipper", (req, res) => {
-  res.sendFile(path.join(__dirname, "/shipper"));
+  res.sendFile(path.join(__dirname, "../shipper.html"));
 });
 
 // (nếu có trang receiver.html thì giữ, không có thì bỏ)
 app.get("/receiver", (req, res) => {
-  res.sendFile(path.join(__dirname, "/receiver"));
+  res.sendFile(path.join(__dirname, "../receiver.html"));
 });
 
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "/admin"));
+  res.sendFile(path.join(__dirname, "../admin.html"));
 });
 
 
