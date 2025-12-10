@@ -681,26 +681,26 @@ app.use(express.static(path.join(__dirname, "..")));
 
 // Trang chính (login/index)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../index.html"));
+  res.sendFile(path.join(__dirname, "/index.html"));
 });
 
 // Dashboard cư dân
 app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../dashboard.html"));
+  res.sendFile(path.join(__dirname, "/dashboard.html"));
 });
 
 // Trang shipper
 app.get("/shipper", (req, res) => {
-  res.sendFile(path.join(__dirname, "../shipper.html"));
+  res.sendFile(path.join(__dirname, "/shipper.html"));
 });
 
 // (nếu có trang receiver.html thì giữ, không có thì bỏ)
 app.get("/receiver", (req, res) => {
-  res.sendFile(path.join(__dirname, "../receiver.html"));
+  res.sendFile(path.join(__dirname, "/receiver.html"));
 });
 
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "../admin.html"));
+  res.sendFile(path.join(__dirname, "/admin.html"));
 });
 
 
