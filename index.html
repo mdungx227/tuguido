@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Locker Chung Cư - Đăng nhập / Đăng ký</title>
+
+  <!-- FontAwesome icon -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google font cho đẹp hơn (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --wood-bg-1: #fff7d9;
+      --wood-bg-2: #f6cf7c;
+      --wood-accent: #f4a226;
+      --wood-accent-dark: #c97a12;
+      --wood-text: #4b3b2a;
+      --error: #dc2626;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, var(--wood-bg-1), var(--wood-bg-2));
+      color: var(--wood-text);
+    }
+
+    .auth-shell {
+      width: 100%;
+      max-width: 460px;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+      padding: 22px 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(135deg, rgba(244, 162, 38, 0.08), transparent 50%),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(249, 207, 124, 0.08),
+          rgba(249, 207, 124, 0.08) 6px,
+          transparent 6px,
+          transparent 12px
+        );
+      pointer-events: none;
+    }
+
+    .brand {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, var(--wood-accent), var(--wood-accent-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 22px;
+      box-shadow: 0 6px 14px rgba(201, 122, 18, 0.5);
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .brand-text p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .main-actions {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .main-btn {
+      border-radius: 999px;
+      padding: 8px 4px;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: var(--wood-text);
+      box-shadow: 0 1px 0 rgba(148, 121, 72, 0.25);
+      transition: all 0.18s ease;
+    }
+
+    .main-btn.primary {
+      background: linear-gradient(135deg, var(--wood-accent), var(--wood-accent-dark));
+      color: white;
+    }
+
+    .main-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(148, 121, 72, 0.35);
+      filter: brightness(1.03);
+    }
+
+    .main-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 3px rgba(148, 121, 72, 0.25);
+      filter: brightness(0.98);
+    }
+
+    .auth-panels {
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .auth-panel {
+      position: relative;
+      margin-top: 8px;
+      padding: 12px 10px 6px;
+      border-radius: 14px;
+      background: rgba(255, 250, 235, 0.9);
+      border: 1px solid rgba(212, 163, 72, 0.35);
+      animation: fadeIn 0.18s ease-out;
+    }
+
+    .auth-panel.hidden {
+      display: none;
+    }
+
+    .auth-panel h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-panel small {
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 121, 72, 0.4);
+      outline: none;
+      font-size: 13px;
+      margin-top: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: #c4a36e;
+      font-size: 12px;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--wood-accent);
+      box-shadow: 0 0 0 1px rgba(244, 162, 38, 0.25),
+                  0 0 0 4px rgba(244, 162, 38, 0.1);
+      background: #fffbeb;
+    }
+
+    .btn-inline {
+      margin-top: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: var(--wood-text);
+      transition: all 0.17s ease;
+    }
+
+    .btn-inline.primary {
+      background: linear-gradient(135deg, var(--wood-accent), var(--wood-accent-dark));
+      color: white;
+      box-shadow: 0 4px 10px rgba(201, 122, 18, 0.45);
+    }
+
+    .btn-inline:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .btn-inline:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    #status {
+      position: relative;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      min-height: 18px;
+    }
+
+    #status span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--wood-accent);
+    }
+
+    .status-error {
+      color: var(--error);
+    }
+
+    .status-success {
+      color: var(--success);
+    }
+
+    .status-info {
+      color: var(--wood-accent-dark);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 11px;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <!-- Header / Brand -->
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Smart Locker Chung Cư</h1>
+          <p>Đăng ký, đăng nhập, gửi đồ bằng số điện thoại + OTP</p>
+        </div>
+      </div>
+
+      <!-- Ba nút chính -->
+      <div class="main-actions">
+        <button id="btnShowLogin" class="main-btn primary">
+          <i class="fas fa-right-to-bracket"></i>
+          <span>Đăng nhập</span>
+        </button>
+        <button id="btnShowRegister" class="main-btn">
+          <i class="fas fa-user-plus"></i>
+          <span>Đăng ký</span>
+        </button>
+        <button id="btnGoShipper" class="main-btn">
+          <i class="fas fa-truck"></i>
+          <span>Gửi đồ</span>
+        </button>
+      </div>
+
+      <!-- Khối form -->
+      <div class="auth-panels">
+        <!-- PANEL ĐĂNG KÝ -->
+        <div id="panelRegister" class="auth-panel hidden">
+          <h2><i class="fas fa-user-plus"></i> Đăng ký cư dân mới</h2>
+          <small>Nhập đầy đủ thông tin, hệ thống sẽ gửi OTP về số điện thoại để xác nhận.</small>
+
+          <label>Họ tên:</label>
+          <input type="text" id="regFullName" placeholder="Nguyễn Văn A" />
+
+          <label>Số điện thoại:</label>
+          <input type="text" id="regPhone" placeholder="0989xxxxxx" />
+
+          <label>Căn hộ (vd: A101):</label>
+          <input type="text" id="regApartment" placeholder="A101" />
+
+          <button id="regSendOtpBtn" class="btn-inline">
+            <i class="fas fa-paper-plane"></i> 1. Gửi OTP
+          </button>
+
+          <label>OTP:</label>
+          <input type="text" id="regOtp" placeholder="6 số OTP" />
+
+          <button id="regSubmitBtn" class="btn-inline primary">
+            <i class="fas fa-check"></i> 2. Xác nhận & Đăng ký
+          </button>
+        </div>
+
+        <!-- PANEL ĐĂNG NHẬP -->
+        <div id="panelLogin" class="auth-panel hidden">
+          <h2><i class="fas fa-right-to-bracket"></i> Đăng nhập</h2>
+          <small>Hệ thống sẽ gửi OTP về số điện thoại đã đăng ký.</small>
+
+          <label>Số điện thoại:</label>
+          <input type="text" id="loginPhone" placeholder="0989xxxxxx" />
+
+          <button id="loginSendOtpBtn" class="btn-inline">
+            <i class="fas fa-paper-plane"></i> 1. Gửi OTP
+          </button>
+
+          <label>OTP:</label>
+          <input type="text" id="loginOtp" placeholder="6 số OTP" />
+
+          <button id="loginSubmitBtn" class="btn-inline primary">
+            <i class="fas fa-door-open"></i> 2. Xác nhận & Đăng nhập
+          </button>
+        </div>
+      </div>
+
+      <!-- trạng thái -->
+      <p id="status"></p>
+
+      <div class="footer-note">
+        <i class="fas fa-info-circle"></i>
+        Cư dân dùng Đăng ký / Đăng nhập. Shipper bấm "Gửi đồ" để vào trang riêng.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JS LOGIC (giữ nguyên API / endpoint) ===== -->
+  <script>
+    const panelRegister = document.getElementById("panelRegister");
+    const panelLogin = document.getElementById("panelLogin");
+    const statusEl = document.getElementById("status");
+
+    const btnShowRegister = document.getElementById("btnShowRegister");
+    const btnShowLogin = document.getElementById("btnShowLogin");
+    const btnGoShipper = document.getElementById("btnGoShipper");
+
+    let regVerificationId = null;
+    let loginVerificationId = null;
+
+    // Điều hướng tới trang shipper
+    btnGoShipper.addEventListener("click", () => {
+      // sửa lại path nếu file shipper của bạn tên khác
+      window.location.href = "/shipper.html";
+    });
+
+    function clearStatus() {
+      statusEl.className = "";
+      statusEl.innerHTML = "";
+    }
+
+    function setStatus(type, text) {
+      // type: "info" | "success" | "error"
+      statusEl.className = "";
+      const span = document.createElement("span");
+      span.innerHTML = `<span class="status-dot"></span>${text}`;
+      if (type === "error") {
+        statusEl.classList.add("status-error");
+      } else if (type === "success") {
+        statusEl.classList.add("status-success");
+      } else {
+        statusEl.classList.add("status-info");
+      }
+      statusEl.innerHTML = "";
+      statusEl.appendChild(span);
+    }
+
+    function showPanel(name) {
+      clearStatus();
+      if (name === "register") {
+        panelRegister.classList.remove("hidden");
+        panelLogin.classList.add("hidden");
+      } else if (name === "login") {
+        panelLogin.classList.remove("hidden");
+        panelRegister.classList.add("hidden");
+      } else {
+        panelLogin.classList.add("hidden");
+        panelRegister.classList.add("hidden");
+      }
+    }
+
+    // Mặc định show panel đăng nhập
+    showPanel("login");
+
+    btnShowRegister.addEventListener("click", () => showPanel("register"));
+    btnShowLogin.addEventListener("click", () => showPanel("login"));
+
+    // Helper gọi API gửi OTP (giữ giống logic cũ)
+    async function sendOtp(phoneInput) {
+      const phoneNumber = phoneInput.value.trim();
+      if (!phoneNumber) {
+        setStatus("error", "Vui lòng nhập số điện thoại");
+        return null;
+      }
+      setStatus("info", "Đang gửi OTP...");
+
+      try {
+        const res = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNumber })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          setStatus("error", data.error || "Gửi OTP thất bại");
+          return null;
+        }
+
+        console.log("Dev OTP:", data.otpCode);
+        setStatus("success", "Đã gửi OTP! (xem console server nếu test)");
+        return data.verificationId;
+      } catch (err) {
+        console.error(err);
+        setStatus("error", "Lỗi kết nối server khi gửi OTP");
+        return null;
+      }
+    }
+
+    // 1. ĐĂNG KÝ – GỬI OTP
+    document.getElementById("regSendOtpBtn").addEventListener("click", async () => {
+      const phoneInput = document.getElementById("regPhone");
+      regVerificationId = await sendOtp(phoneInput);
+    });
+
+    // 2. ĐĂNG KÝ – XÁC NHẬN & TẠO USER
+    document.getElementById("regSubmitBtn").addEventListener("click", async () => {
+      const fullName = document.getElementById("regFullName").value.trim();
+      const phoneNumber = document.getElementById("regPhone").value.trim();
+      const apartment = document.getElementById("regApartment").value.trim();
+      const otpCode = document.getElementById("regOtp").value.trim();
+
+      if (!regVerificationId) {
+        setStatus("error", "Bạn cần bấm 'Gửi OTP' trước");
+        return;
+      }
+      if (!fullName || !phoneNumber || !otpCode) {
+        setStatus("error", "Vui lòng nhập đầy đủ Họ tên, SĐT, OTP");
+        return;
+      }
+
+      setStatus("info", "Đang xác nhận đăng ký...");
+
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phoneNumber,
+            fullName,
+            apartment,
+            verificationId: regVerificationId,
+            otpCode
+          })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          setStatus("error", data.error || "Đăng ký thất bại");
+          return;
+        }
+
+        // Lưu token & thông tin user
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("phoneNumber", data.user.phoneNumber);
+        localStorage.setItem("role", data.user.role || "resident");
+
+        // Sau khi đăng ký xong: chuyển về form Đăng nhập
+        document.getElementById("loginPhone").value = phoneNumber;
+        setStatus("success", "Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.");
+        showPanel("login");
+      } catch (err) {
+        console.error(err);
+        setStatus("error", "Lỗi kết nối server khi đăng ký");
+      }
+    });
+
+    // 3. ĐĂNG NHẬP – GỬI OTP
+    document.getElementById("loginSendOtpBtn").addEventListener("click", async () => {
+      const phoneInput = document.getElementById("loginPhone");
+      loginVerificationId = await sendOtp(phoneInput);
+    });
+
+    // 4. ĐĂNG NHẬP – XÁC NHẬN OTP
+    document.getElementById("loginSubmitBtn").addEventListener("click", async () => {
+      const otpCode = document.getElementById("loginOtp").value.trim();
+
+      if (!loginVerificationId) {
+        setStatus("error", "Bạn cần bấm 'Gửi OTP' trước");
+        return;
+      }
+      if (!otpCode) {
+        setStatus("error", "Vui lòng nhập OTP");
+        return;
+      }
+
+      setStatus("info", "Đang xác nhận đăng nhập...");
+
+      try {
+        const res = await fetch("/api/auth/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            verificationId: loginVerificationId,
+            otpCode
+          })
+        });
+        const data = await res.json();
+        // Lưu token & thông tin user
+        const role = (data.user && data.user.role) || "resident";
+
+        if (!res.ok || !data.success) {
+          setStatus("error", data.error || "Đăng nhập thất bại");
+          return;
+        }
+
+        // Lưu token & thông tin user
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("phoneNumber", data.phoneNumber);
+        localStorage.setItem("role", data.role || "resident");
+
+        setStatus("success", "Đăng nhập thành công! Đang chuyển vào hệ thống...");
+
+        // Nếu là admin -> vào admin.html, còn lại -> dashboard
+    if (role === "admin") {
+      window.location.href = "/admin.html";
+    } else {
+      window.location.href = "/dashboard.html";
+    }
+      } catch (err) {
+        console.error(err);
+        setStatus("error", "Lỗi kết nối server khi đăng nhập");
+      }
+    });
+  </script>
+</body>
+</html>

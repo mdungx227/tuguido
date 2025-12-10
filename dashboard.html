@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Smart Locker - Bảng điều khiển cư dân</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Font giống trang auth -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --wood-bg-1: #fff7d9;
+            --wood-bg-2: #f6cf7c;
+            --wood-accent: #f4a226;
+            --wood-accent-dark: #c97a12;
+            --wood-text: #4b3b2a;
+            --error: #dc2626;
+            --success: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top left, var(--wood-bg-1), var(--wood-bg-2));
+            color: var(--wood-text);
+        }
+
+        .dash-shell {
+            width: 100%;
+            max-width: 900px;
+            padding: 16px;
+        }
+
+        .dash-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 22px;
+            box-shadow:
+                0 22px 45px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(0, 0, 0, 0.03);
+            padding: 18px 18px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(135deg, rgba(244, 162, 38, 0.08), transparent 55%),
+                repeating-linear-gradient(
+                    -45deg,
+                    rgba(249, 207, 124, 0.08),
+                    rgba(249, 207, 124, 0.08) 6px,
+                    transparent 6px,
+                    transparent 12px
+                );
+            pointer-events: none;
+        }
+
+        .dash-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, var(--wood-accent), var(--wood-accent-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            box-shadow: 0 6px 14px rgba(201, 122, 18, 0.5);
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .brand-text p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(255, 237, 213, 0.9);
+            border: 1px solid rgba(148, 121, 72, 0.35);
+            color: var(--wood-text);
+        }
+
+        #userRoleBadge {
+            margin-left: 4px;
+            border-radius: 999px;
+            padding: 1px 7px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f97316, #b45309);
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 8px rgba(180, 83, 9, 0.4);
+        }
+
+        .btn-logout:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+
+        /* Status strip */
+
+        .status-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #fffbeb;
+            border: 1px dashed rgba(180, 119, 41, 0.45);
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        /* Tabs */
+
+        .dash-tabs {
+            display: inline-flex;
+            border-radius: 999px;
+            background: rgba(255, 237, 213, 0.9);
+            padding: 4px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        .dash-tab {
+            border-radius: 999px;
+            border: none;
+            padding: 7px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            color: rgba(76, 57, 34, 0.8);
+        }
+
+        .dash-tab.active {
+            background: linear-gradient(135deg, var(--wood-accent), var(--wood-accent-dark));
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(201, 122, 18, 0.45);
+        }
+
+        .dash-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .dash-body {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .dash-section {
+            border-radius: 18px;
+            padding: 12px 12px 10px;
+            background: rgba(255, 250, 235, 0.95);
+            border: 1px solid rgba(212, 163, 72, 0.4);
+            font-size: 13px;
+        }
+
+        .dash-section.hidden {
+            display: none;
+        }
+
+        .dash-section h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dash-section p {
+            margin: 0 0 8px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        label {
+            display: block;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 7px 9px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 121, 72, 0.4);
+            outline: none;
+            font-size: 13px;
+            margin-top: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        select:focus,
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            border-color: var(--wood-accent);
+            box-shadow: 0 0 0 1px rgba(244, 162, 38, 0.25),
+                        0 0 0 4px rgba(244, 162, 38, 0.1);
+            background: #fffbeb;
+        }
+
+        .btn-primary {
+            margin-top: 10px;
+            padding: 7px 13px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.5);
+        }
+
+        .btn-secondary {
+            margin-top: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 121, 72, 0.5);
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fffbeb;
+            color: var(--wood-text);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: wait;
+            box-shadow: none;
+        }
+
+        #reserveResult {
+            margin-top: 9px;
+            font-size: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(22, 163, 74, 0.08);
+            border: 1px solid rgba(22, 163, 74, 0.5);
+            color: #166534;
+        }
+
+        /* Lịch sử */
+
+        #historyEmpty {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        #historyTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+
+        #historyTable th,
+        #historyTable td {
+            padding: 4px 6px;
+            border-bottom: 1px solid rgba(148, 121, 72, 0.4);
+            text-align: left;
+        }
+
+        #historyTable th {
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .footer-note {
+            margin-top: 10px;
+            font-size: 11px;
+            text-align: right;
+            opacity: 0.75;
+        }
+
+        .pickup-box {
+            margin-top: 4px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: rgba(255, 247, 237, 0.95);
+            border: 1px solid rgba(212, 163, 72, 0.6);
+            font-size: 12px;
+        }
+
+        .pickup-box h4 {
+            margin: 0 0 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pickup-info-row {
+            margin-top: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dash-shell">
+        <div class="dash-card">
+            <div class="dash-inner">
+                <!-- HEADER -->
+                <header class="dash-header">
+                    <div class="brand-left">
+                        <div class="brand-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="brand-text">
+                            <h1>Smart Locker Chung Cư</h1>
+                            <p>Đặt tủ gửi đồ, nhận hàng & xem lịch sử</p>
+                        </div>
+                    </div>
+
+                    <div class="user-info">
+                        <div class="user-pill">
+                            <i class="fas fa-user"></i>
+                            <span id="userPhone">--</span>
+                            <span id="userRoleBadge"></span>
+                        </div>
+                        <div>
+                            <button class="btn-logout" onclick="authManager.logout()">
+                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- STATUS NHỎ -->
+                <div class="status-strip">
+                    <div class="status-chip">
+                        <span class="status-dot" id="connectionStatus"></span>
+                        <span id="connectionText">Đang kết nối tủ...</span>
+                    </div>
+                    <div style="font-size: 11px; opacity: 0.85;">
+                        <i class="fas fa-circle-info"></i>
+                        Đặt tủ để shipper gửi đồ, sau đó nhận hàng bằng OTP và theo dõi lịch sử.
+                    </div>
+                </div>
+
+                <!-- TABS -->
+                <div class="dash-tabs">
+                    <button id="tabReserve" class="dash-tab active">
+                        <i class="fas fa-box-open"></i>
+                        Đặt tủ gửi đồ
+                    </button>
+                    <button id="tabHistory" class="dash-tab">
+                        <i class="fas fa-clock-rotate-left"></i>
+                        Lịch sử & Nhận hàng
+                    </button>
+                </div>
+
+                <!-- MAIN BODY -->
+                <div class="dash-body">
+                    <!-- PANEL ĐẶT TỦ -->
+                    <section id="sectionReserve" class="dash-section">
+                        <h3><i class="fas fa-box-open"></i> Đặt tủ gửi đồ</h3>
+                        <p>
+                            Chọn tủ muốn đặt. Hệ thống sẽ tạo mã đặt tủ, bạn gửi mã đó cho shipper để họ bỏ hàng vào.
+                        </p>
+
+                        <div class="setting-item">
+                            <label for="lockerSelect">Chọn tủ:</label>
+                            <select id="lockerSelect">
+                                <option value="Locker1">Locker 1</option>
+                                <!-- sau này có thể thêm Locker2, Locker3... -->
+                            </select>
+                        </div>
+
+                        <button id="reserveBtn" class="btn-primary" onclick="reserveLocker()">
+                            <i class="fas fa-calendar-plus"></i> Đặt tủ
+                        </button>
+
+                        <div id="reserveResult" style="display:none;"></div>
+                    </section>
+
+                    <!-- PANEL LỊCH SỬ + NHẬN HÀNG -->
+                    <section id="sectionHistory" class="dash-section hidden">
+                        <h3><i class="fas fa-clock-rotate-left"></i> Nhận hàng & lịch sử đặt tủ</h3>
+                        <p>
+                            Kiểm tra xem bạn có đơn hàng đang chờ trong tủ không, sau đó nhập OTP để mở tủ lấy hàng.
+                        </p>
+
+                        <!-- KHỐI NHẬN HÀNG -->
+                        <div class="pickup-box">
+                            <h4><i class="fas fa-box"></i> Nhận hàng bằng OTP</h4>
+                            <p style="margin: 0 0 6px;">
+                                Bấm kiểm tra, nếu có đơn đang chờ hệ thống sẽ hiển thị thông tin tủ. Sau đó nhập OTP mà hệ thống gửi cho bạn.
+                            </p>
+
+                            <button id="btnCheckPickup" class="btn-secondary" onclick="checkReceiverReservation()">
+                                <i class="fas fa-magnifying-glass"></i> Kiểm tra đơn hàng đang chờ
+                            </button>
+
+                            <div id="pickupStatus" style="margin-top:6px; font-size:12px; display:none;"></div>
+
+                            <div id="pickupDetail" style="display:none; margin-top:6px;">
+                                <div class="pickup-info-row">
+                                    <strong>Tủ: </strong><span id="pickupLocker">-</span>
+                                </div>
+                                <div class="pickup-info-row">
+                                    <strong>Trạng thái: </strong><span id="pickupStatusText">-</span>
+                                </div>
+                                <div class="pickup-info-row">
+                                    <strong>Hết hạn: </strong><span id="pickupExpire">-</span>
+                                </div>
+                            </div>
+
+                            <div id="pickupOtpBox" style="display:none; margin-top:8px;">
+                                <label for="pickupOtp" style="margin-top:4px;">Nhập OTP nhận hàng:</label>
+                                <input type="text" id="pickupOtp" placeholder="6 số OTP nhận hàng">
+                                <button id="btnPickupOpen" class="btn-primary" style="margin-top:8px;" onclick="verifyPickupOtp()">
+                                    <i class="fas fa-door-open"></i> Mở tủ lấy hàng
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- LỊCH SỬ -->
+                        <p style="margin-top:10px;">
+                            <strong>Lịch sử đặt tủ</strong> – Các lượt đặt tủ gần đây của số điện thoại này.
+                        </p>
+
+                        <button class="btn-secondary" onclick="loadReservations()">
+                            <i class="fas fa-rotate-right"></i> Tải lại lịch sử
+                        </button>
+
+                        <div id="historyEmpty" style="display:none;">
+                            Chưa có lượt đặt tủ nào.
+                        </div>
+
+                        <table id="historyTable" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Tủ</th>
+                                    <th>Mã đặt tủ</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hết hạn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody"></tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <div class="footer-note">
+                    <i class="fas fa-lightbulb"></i>
+                    Gợi ý: Chụp màn hình mã đặt tủ để gửi nhanh cho shipper.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v12 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqfcOprdE5MT6m1yfXmRDtCzngtX86-7U",
+            authDomain: "minhquang-36ee2.firebaseapp.com",
+            databaseURL: "https://minhquang-36ee2-default-rtdb.firebaseio.com",
+            projectId: "minhquang-36ee2",
+            storageBucket: "minhquang-36ee2.firebasestorage.app",
+            messagingSenderId: "986858991599",
+            appId: "1:986858991599:web:53c36493204131a10c501a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Make database available globally (nếu script.js cần)
+        window.database = database;
+        window.ref = ref;
+        window.onValue = onValue;
+        window.set = set;
+        window.get = get;
+
+        console.log('✅ Firebase v12 đã khởi tạo thành công');
+    </script>
+
+    <!-- Auth -->
+    <script src="auth.js"></script>
+    <script>
+        // Kiểm tra đăng nhập & hiển thị info user
+        if (!authManager.requireAuth()) {
+            // sẽ redirect về login nếu chưa đăng nhập
+        } else {
+            const phoneSpan = document.getElementById('userPhone');
+            if (phoneSpan) {
+                phoneSpan.textContent = authManager.formatPhoneNumber(authManager.phoneNumber);
+            }
+
+            const role = localStorage.getItem("role") || "resident";
+            const rb = document.getElementById("userRoleBadge");
+            if (rb) {
+                rb.textContent = role;
+                if (role === "admin") {
+                    rb.style.borderColor = "#fbbf24";
+                    rb.style.color = "#92400e";
+                    rb.style.background = "rgba(252, 211, 77, 0.4)";
+                } else {
+                    rb.style.borderColor = "rgba(148,121,72,0.5)";
+                    rb.style.color = "rgba(76,57,34,0.9)";
+                    rb.style.background = "rgba(255,237,213,0.8)";
+                }
+            }
+        }
+
+        // Tabs Đặt tủ / Lịch sử & Nhận hàng
+        const tabReserve = document.getElementById("tabReserve");
+        const tabHistory = document.getElementById("tabHistory");
+        const sectionReserve = document.getElementById("sectionReserve");
+        const sectionHistory = document.getElementById("sectionHistory");
+
+        function showSection(name) {
+            if (name === "reserve") {
+                tabReserve.classList.add("active");
+                tabHistory.classList.remove("active");
+                sectionReserve.classList.remove("hidden");
+                sectionHistory.classList.add("hidden");
+            } else {
+                tabHistory.classList.add("active");
+                tabReserve.classList.remove("active");
+                sectionHistory.classList.remove("hidden");
+                sectionReserve.classList.add("hidden");
+                // mỗi lần chuyển sang tab lịch sử thì tải lại
+                loadReservations();
+            }
+        }
+
+        tabReserve.addEventListener("click", () => showSection("reserve"));
+        tabHistory.addEventListener("click", () => showSection("history"));
+    </script>
+
+    <!-- Logic ĐẶT TỦ & LỊCH SỬ & NHẬN HÀNG -->
+    <script>
+        const API_BASE = "http://localhost:3000/api";
+        let currentPickupReservationId = null;
+
+        function setReserveLoading(loading) {
+            const btn = document.getElementById("reserveBtn");
+            if (!btn) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đặt...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-calendar-plus"></i> Đặt tủ';
+            }
+        }
+
+        async function reserveLocker() {
+            const lockerId = document.getElementById("lockerSelect").value;
+            const resultEl = document.getElementById("reserveResult");
+
+            if (!lockerId) {
+                alert("Vui lòng chọn tủ.");
+                return;
+            }
+
+            if (resultEl) resultEl.style.display = "none";
+            setReserveLoading(true);
+
+            try {
+                const res = await fetch(`${API_BASE}/user/reserve-locker`, {
+                    method: "POST",
+                    headers: authManager.getAuthHeaders(),
+                    body: JSON.stringify({ lockerId })
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Đặt tủ thất bại");
+                }
+
+                if (resultEl) {
+                    const expireText = new Date(data.expiresAt).toLocaleString("vi-VN");
+                    resultEl.innerHTML = `
+                        <strong>Đặt tủ thành công!</strong><br>
+                        Tủ: <b>${data.lockerId}</b><br>
+                        Mã đặt tủ: <b>${data.bookingCode}</b><br>
+                        Hạn sử dụng: ${expireText}<br>
+                        <span style="font-size:12px; color:#9ca3af;">Hãy gửi mã này cho shipper.</span>
+                    `;
+                    resultEl.style.display = "block";
+                }
+
+                // load lại lịch sử
+                loadReservations();
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Không thể đặt tủ.");
+            } finally {
+                setReserveLoading(false);
+            }
+        }
+
+        async function loadReservations() {
+            const table = document.getElementById("historyTable");
+            const tbody = document.getElementById("historyTableBody");
+            const emptyEl = document.getElementById("historyEmpty");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+            if (emptyEl) emptyEl.style.display = "none";
+            if (table) table.style.display = "none";
+
+            try {
+                const res = await fetch(`${API_BASE}/user/reservations`, {
+                    method: "GET",
+                    headers: authManager.getAuthHeaders()
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Không lấy được lịch sử");
+                }
+
+                const reservations = data.reservations || [];
+                if (!reservations.length) {
+                    if (emptyEl) emptyEl.style.display = "block";
+                    return;
+                }
+
+                if (table) table.style.display = "table";
+
+                reservations.forEach(r => {
+                    const tr = document.createElement("tr");
+                    const createdAt = r.createdAt
+                        ? new Date(r.createdAt).toLocaleString("vi-VN")
+                        : "-";
+                    const expiresAt = r.expiresAt
+                        ? new Date(r.expiresAt).toLocaleString("vi-VN")
+                        : "-";
+
+                    const statusLabel = r.status || "unknown";
+
+                    tr.innerHTML = `
+                        <td>${createdAt}</td>
+                        <td>${r.lockerId || "-"}</td>
+                        <td>${r.bookingCode || "-"}</td>
+                        <td>${statusLabel}</td>
+                        <td>${expiresAt}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Không thể tải lịch sử đặt tủ.");
+            }
+        }
+
+        async function checkReceiverReservation() {
+            const statusEl = document.getElementById("pickupStatus");
+            const detailEl = document.getElementById("pickupDetail");
+            const otpBox = document.getElementById("pickupOtpBox");
+
+            if (statusEl) {
+                statusEl.style.display = "none";
+                statusEl.textContent = "";
+            }
+            if (detailEl) detailEl.style.display = "none";
+            if (otpBox) otpBox.style.display = "none";
+            currentPickupReservationId = null;
+
+            try {
+                const res = await fetch(`${API_BASE}/receiver/check-reservation`, {
+                    method: "POST",
+                    headers: {
+                        ...authManager.getAuthHeaders(),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.error || "Không kiểm tra được đơn hàng");
+                }
+
+                if (!data.hasReservation) {
+                    if (statusEl) {
+                        statusEl.style.display = "block";
+                        statusEl.style.color = "#9ca3af";
+                        statusEl.textContent = "Hiện tại bạn không có đơn hàng nào đang chờ trong tủ.";
+                    }
+                    return;
+                }
+
+                const r = data.reservation;
+                currentPickupReservationId = r.id;
+
+                if (detailEl) {
+                    detailEl.style.display = "block";
+                    document.getElementById("pickupLocker").textContent = r.lockerId || "Locker1";
+                    document.getElementById("pickupStatusText").textContent = r.status || "-";
+                    document.getElementById("pickupExpire").textContent =
+                        r.expiresAt ? new Date(r.expiresAt).toLocaleString("vi-VN") : "-";
+                }
+
+                if (otpBox) {
+                    otpBox.style.display = "block";
+                }
+
+                if (statusEl) {
+                    statusEl.style.display = "block";
+                    statusEl.style.color = "#166534";
+                    statusEl.textContent = "Đã tìm thấy đơn hàng đang chờ. Vui lòng nhập OTP để mở tủ.";
+                }
+            } catch (err) {
+                console.error(err);
+                if (statusEl) {
+                    statusEl.style.display = "block";
+                    statusEl.style.color = "#b91c1c";
+                    statusEl.textContent = err.message || "Có lỗi xảy ra khi kiểm tra đơn hàng.";
+                }
+            }
+        }
+
+        async function verifyPickupOtp() {
+            const otpInput = document.getElementById("pickupOtp");
+            const otpCode = otpInput ? otpInput.value.trim() : "";
+
+            if (!currentPickupReservationId) {
+                alert("Bạn chưa có đơn hàng nào được chọn. Hãy bấm 'Kiểm tra đơn hàng đang chờ' trước.");
+                return;
+            }
+
+            if (!otpCode) {
+                alert("Vui lòng nhập OTP nhận hàng.");
+                return;
+            }
+
+            const btn = document.getElementById("btnPickupOpen");
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang mở tủ...';
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/receiver/verify-and-open`, {
+                    method: "POST",
+                    headers: {
+                        ...authManager.getAuthHeaders(),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        reservationId: currentPickupReservationId,
+                        otpCode
+                    })
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.error || "Không mở được tủ. Vui lòng kiểm tra lại OTP.");
+                }
+
+                alert("Mở tủ thành công! Bạn có thể ra tủ để lấy hàng.");
+                // Sau khi lấy hàng xong, load lại lịch sử
+                loadReservations();
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Có lỗi xảy ra khi mở tủ.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-door-open"></i> Mở tủ lấy hàng';
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Mặc định load lịch sử một lần
+            loadReservations();
+        });
+    </script>
+</body>
+</html>
