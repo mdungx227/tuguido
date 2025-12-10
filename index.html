@@ -448,7 +448,7 @@
       setStatus("info", "Đang gửi OTP...");
 
       try {
-        const res = await fetch("/api/auth/send-otp", {
+        const res = await fetch("http://localhost:3000/api/auth/send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phoneNumber })
@@ -495,7 +495,7 @@
       setStatus("info", "Đang xác nhận đăng ký...");
 
       try {
-        const res = await fetch("/api/auth/register", {
+        const res = await fetch("http://localhost:3000/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -550,7 +550,7 @@
       setStatus("info", "Đang xác nhận đăng nhập...");
 
       try {
-        const res = await fetch("/api/auth/verify-otp", {
+        const res = await fetch("http://localhost:3000/api/auth/verify-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -588,6 +588,7 @@
   </script>
 </body>
 </html>
+
 
 
 
