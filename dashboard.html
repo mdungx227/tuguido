@@ -456,14 +456,15 @@
                     <section id="sectionReserve" class="dash-section">
                         <h3><i class="fas fa-box-open"></i> Đặt tủ gửi đồ</h3>
                         <p>
-                            Chọn tủ muốn đặt. Hệ thống sẽ tạo mã đặt tủ, bạn gửi mã đó cho shipper để họ bỏ hàng vào.
+                            Chọn <b>kích thước tủ</b> phù hợp với gói hàng. Hệ thống sẽ tạo mã đặt tủ, bạn gửi mã đó cho shipper để họ bỏ hàng vào.
                         </p>
 
                         <div class="setting-item">
-                            <label for="lockerSelect">Chọn tủ:</label>
-                            <select id="lockerSelect">
-                                <option value="Locker1">Locker 1</option>
-                                <!-- sau này có thể thêm Locker2, Locker3... -->
+                            <label for="lockerSize">Kích thước tủ:</label>
+                            <select id="lockerSize">
+                                <option value="small">Nhỏ (S)</option>
+                                <option value="medium" selected>Vừa (M)</option>
+                                <option value="large">Lớn (L)</option>
                             </select>
                         </div>
 
@@ -533,6 +534,7 @@
                                 <tr>
                                     <th>Thời gian</th>
                                     <th>Tủ</th>
+                                    <th>Kích thước</th>
                                     <th>Mã đặt tủ</th>
                                     <th>Trạng thái</th>
                                     <th>Hết hạn</th>
@@ -635,7 +637,7 @@
 
     <!-- Logic ĐẶT TỦ & LỊCH SỬ & NHẬN HÀNG -->
     <script>
-        const API_BASE = "http://localhost:3000/api";
+        const API_BASE = "/api";
         let currentPickupReservationId = null;
 
         function setReserveLoading(loading) {
@@ -651,11 +653,12 @@
         }
 
         async function reserveLocker() {
-            const lockerId = document.getElementById("lockerSelect").value;
+            const sizeSelect = document.getElementById("lockerSize");
+            const lockerSize = sizeSelect ? sizeSelect.value : null;
             const resultEl = document.getElementById("reserveResult");
 
-            if (!lockerId) {
-                alert("Vui lòng chọn tủ.");
+            if (!lockerSize) {
+                alert("Vui lòng chọn kích thước tủ.");
                 return;
             }
 
@@ -666,7 +669,7 @@
                 const res = await fetch(`${API_BASE}/user/reserve-locker`, {
                     method: "POST",
                     headers: authManager.getAuthHeaders(),
-                    body: JSON.stringify({ lockerId })
+                    body: JSON.stringify({ lockerSize })
                 });
 
                 const data = await res.json().catch(() => ({}));
@@ -676,9 +679,17 @@
 
                 if (resultEl) {
                     const expireText = new Date(data.expiresAt).toLocaleString("vi-VN");
+                    const sizeLabelMap = {
+                        small: "Nhỏ (S)",
+                        medium: "Vừa (M)",
+                        large: "Lớn (L)"
+                    };
+                    const sizeLabel = sizeLabelMap[data.lockerSize] || data.lockerSize || "-";
+
                     resultEl.innerHTML = `
                         <strong>Đặt tủ thành công!</strong><br>
-                        Tủ: <b>${data.lockerId}</b><br>
+                        Tủ vật lý: <b>${data.lockerId}</b><br>
+                        Kích thước đã chọn: <b>${sizeLabel}</b><br>
                         Mã đặt tủ: <b>${data.bookingCode}</b><br>
                         Hạn sử dụng: ${expireText}<br>
                         <span style="font-size:12px; color:#9ca3af;">Hãy gửi mã này cho shipper.</span>
@@ -725,6 +736,12 @@
 
                 if (table) table.style.display = "table";
 
+                const sizeLabelMap = {
+                    small: "Nhỏ (S)",
+                    medium: "Vừa (M)",
+                    large: "Lớn (L)"
+                };
+
                 reservations.forEach(r => {
                     const tr = document.createElement("tr");
                     const createdAt = r.createdAt
@@ -735,10 +752,12 @@
                         : "-";
 
                     const statusLabel = r.status || "unknown";
+                    const lockerSizeLabel = sizeLabelMap[r.lockerSize] || (r.lockerSize || "-");
 
                     tr.innerHTML = `
                         <td>${createdAt}</td>
                         <td>${r.lockerId || "-"}</td>
+                        <td>${lockerSizeLabel}</td>
                         <td>${r.bookingCode || "-"}</td>
                         <td>${statusLabel}</td>
                         <td>${expiresAt}</td>
