@@ -1,10 +1,10 @@
 // Authentication Management for Smart Locker System
 class AuthManager {
     constructor() {
-        this.baseURL = 'http://localhost:3000/api';
-        // Đọc token & phone từ localStorage (dùng key 'token')
-        this.token = localStorage.getItem('token');
+        this.baseURL = '/api';
+        // Không giữ token nữa, chỉ giữ thông tin hiển thị
         this.phoneNumber = localStorage.getItem('phoneNumber');
+        this.role = localStorage.getItem('role') || 'resident';
     }
 
     // Gửi OTP tới số điện thoại
@@ -13,8 +13,10 @@ class AuthManager {
             const response = await fetch(`${this.baseURL}/auth/send-otp`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
+                // cookie chưa cần ở bước này, nhưng để cho thống nhất vẫn có thể dùng credentials
+                credentials: 'include',
                 body: JSON.stringify({ phoneNumber })
             });
 
@@ -44,21 +46,24 @@ class AuthManager {
             const response = await fetch(`${this.baseURL}/auth/verify-otp`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
+                credentials: 'include', // để browser gửi/nhận cookie
                 body: JSON.stringify({ verificationId, otpCode })
             });
 
             const data = await response.json();
             
             if (data.success) {
-                // backend trả: token, phoneNumber, role, user...
-                this.setSession(data.token, data.phoneNumber, data.role);
+                // backend đã set cookie authToken rồi
+                // ở đây chỉ cần lưu phone + role để UI dùng
+                this.setSession(data.phoneNumber, data.role);
+
                 return {
                     success: true,
-                    token: data.token,
                     phoneNumber: data.phoneNumber,
-                    role: data.role
+                    role: data.role,
+                    user: data.user
                 };
             } else {
                 throw new Error(data.error || 'Failed to verify OTP');
@@ -78,19 +83,21 @@ class AuthManager {
             const response = await fetch(`${this.baseURL}/auth/register`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ phoneNumber, fullName, apartment, verificationId, otpCode })
             });
 
             const data = await response.json();
             
             if (data.success) {
-                this.setSession(data.token, data.user.phoneNumber, data.user.role);
+                // backend cũng set cookie authToken sau khi đăng ký
+                this.setSession(data.user.phoneNumber, data.user.role);
+
                 return {
                     success: true,
-                    user: data.user,
-                    token: data.token
+                    user: data.user
                 };
             } else {
                 throw new Error(data.error || 'Failed to register user');
@@ -104,39 +111,46 @@ class AuthManager {
         }
     }
 
-    // Lưu session vào bộ nhớ
-    setSession(token, phoneNumber, role = 'resident') {
-        this.token = token;
+    // Lưu session (chỉ phone + role, KHÔNG lưu token nữa)
+    setSession(phoneNumber, role = 'resident') {
         this.phoneNumber = phoneNumber;
-        localStorage.setItem('token', token);
+        this.role = role;
         localStorage.setItem('phoneNumber', phoneNumber);
         localStorage.setItem('role', role);
     }
 
-    // Kiểm tra đã đăng nhập chưa
+    // Kiểm tra đã đăng nhập chưa (dựa trên phoneNumber lưu lại)
     isAuthenticated() {
-        // đọc lại mỗi lần cho chắc
-        this.token = localStorage.getItem('token');
         this.phoneNumber = localStorage.getItem('phoneNumber');
-        return !!(this.token && this.phoneNumber);
+        this.role = localStorage.getItem('role') || 'resident';
+        return !!this.phoneNumber;
     }
 
-    // Header kèm JWT
+    // Trước dùng để gửi Authorization header, giờ bỏ token nên chỉ cần Content-Type
     getAuthHeaders() {
         return {
-            'Authorization': `Bearer ${this.token}`,
             'Content-Type': 'application/json'
         };
     }
 
     // Đăng xuất
-    logout() {
-        this.token = null;
+    async logout() {
+        // Option: nếu em có thêm endpoint /api/auth/logout để clear cookie, gọi ở đây:
+        try {
+            await fetch(`${this.baseURL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (e) {
+            console.warn('Logout API error (có thể chưa implement):', e);
+        }
+
         this.phoneNumber = null;
-        localStorage.removeItem('token');
+        this.role = null;
         localStorage.removeItem('phoneNumber');
         localStorage.removeItem('role');
-        // Trang login của bạn là index.html
+
+        // Trang login là index.html
         window.location.href = '/index.html';
     }
 
@@ -182,6 +196,9 @@ class AuthManager {
 
 // Tạo instance global
 const authManager = new AuthManager();
+
+        // Đọc token & phone từ localStorage (dùng key 'token')
+
 
 // Utility functions for UI
 function showMessage(message, type = 'info') {
