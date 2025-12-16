@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Locker Chung Cư - Đăng nhập / Đăng ký</title>
-  <base href="/tuguido/">
 
   <!-- FontAwesome icon -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -135,6 +134,7 @@
     .main-btn.primary {
       background: linear-gradient(135deg, var(--wood-accent), var(--wood-accent-dark));
       color: white;
+      font-weight: 600;
     }
 
     .main-btn:hover {
@@ -305,7 +305,7 @@
 
       <!-- Ba nút chính -->
       <div class="main-actions">
-        <button id="btnShowLogin" class="main-btn primary">
+        <button id="btnShowLogin" class="main-btn ">
           <i class="fas fa-right-to-bracket"></i>
           <span>Đăng nhập</span>
         </button>
@@ -394,7 +394,7 @@
     // Điều hướng tới trang shipper
     btnGoShipper.addEventListener("click", () => {
       // sửa lại path nếu file shipper của bạn tên khác
-      window.location.href = "shipper.html";
+      window.location.href = "/shipper.html";
     });
 
     function clearStatus() {
@@ -420,6 +420,10 @@
 
     function showPanel(name) {
       clearStatus();
+
+       // đổi trạng thái nút (in đậm/nổi bật)
+  btnShowLogin.classList.toggle("primary", name === "login");
+  btnShowRegister.classList.toggle("primary", name === "register");
       if (name === "register") {
         panelRegister.classList.remove("hidden");
         panelLogin.classList.add("hidden");
@@ -448,7 +452,7 @@
       setStatus("info", "Đang gửi OTP...");
 
       try {
-        const res = await fetch("http://localhost:3000/api/auth/send-otp", {
+        const res = await fetch("/api/auth/send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phoneNumber })
@@ -495,7 +499,7 @@
       setStatus("info", "Đang xác nhận đăng ký...");
 
       try {
-        const res = await fetch("http://localhost:3000/api/auth/register", {
+        const res = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -550,7 +554,7 @@
       setStatus("info", "Đang xác nhận đăng nhập...");
 
       try {
-        const res = await fetch("http://localhost:3000/api/auth/verify-otp", {
+        const res = await fetch("/api/auth/verify-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -576,9 +580,9 @@
 
         // Nếu là admin -> vào admin.html, còn lại -> dashboard
     if (role === "admin") {
-      window.location.href = "admin.html";
+      window.location.href = "/admin.html";
     } else {
-      window.location.href = "dashboard.html";
+      window.location.href = "/dashboard.html";
     }
       } catch (err) {
         console.error(err);
@@ -588,10 +592,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
